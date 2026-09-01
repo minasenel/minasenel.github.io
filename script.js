@@ -31,7 +31,7 @@ function updateParallax() {
   const y = window.scrollY;
   clouds.forEach((el) => {
     const speed = parseFloat(el.dataset.speed) || 0.1;
-    el.style.transform = `translateY(${y * speed}px)`;
+    el.style.transform = `translate3d(0, ${y * speed}px, 0)`;
   });
   ticking = false;
 }

@@ -105,20 +105,24 @@ body {
   position: absolute;
   width: 300px;
   opacity: 0;
-  transform: translateY(24px);
+  transform: translate3d(0, 24px, 0);
   transition: opacity 1.4s ease, transform 1.4s ease;
+  will-change: transform, opacity;
+}
+.cloud img {
+  width: 100%;
+  height: auto;
   animation: drift 24s ease-in-out infinite;
   will-change: transform;
 }
-.cloud img { width: 100%; height: auto; }
-.cloud.visible { opacity: var(--cloud-opacity, 0.9); transform: translateY(0); }
+.cloud.visible { opacity: var(--cloud-opacity, 0.9); transform: translate3d(0, 0, 0); }
 
 .cloud--sm { width: 160px; }
 .cloud--lg { width: 420px; }
 
 @keyframes drift {
-  0%, 100% { margin-left: 0; }
-  50% { margin-left: 26px; }
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(26px, 0, 0); }
 }
 
 /* ---------- reveal / fade animations ---------- */
@@ -422,6 +426,11 @@ h1, h2 { text-shadow: var(--legible-shadow); }
 }
 .skill-pill:hover { background: rgba(255, 255, 255, 0.85); transform: translateY(-1px); }
 
+.tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
 .tag {
   font-size: 0.78rem;
   padding: 7px 14px;
@@ -429,6 +438,7 @@ h1, h2 { text-shadow: var(--legible-shadow); }
   background: var(--chip-bg);
   border: 1px solid var(--glass-border);
   color: var(--ink);
+  white-space: nowrap;
   transition: border-color 0.25s ease, background 0.25s ease;
 }
 .tag:hover { border-color: rgba(15, 23, 42, 0.3); background: var(--chip-bg-hover); }
@@ -633,4 +643,74 @@ h1, h2 { text-shadow: var(--legible-shadow); }
 @media (max-width: 480px) {
   .container { padding: 0 18px; }
   .cloud { display: none; }
+}
+
+/* ---------- mobile: scroll performance & GPU acceleration ---------- */
+@media (max-width: 768px) {
+  :root {
+    --glass-bg: rgba(255, 255, 255, 0.55);
+    --glass-bg-hover: rgba(255, 255, 255, 0.65);
+    --chip-bg: rgba(255, 255, 255, 0.62);
+    --chip-bg-hover: rgba(255, 255, 255, 0.78);
+  }
+
+  /* background-attachment: fixed forces a heavy repaint on every mobile scroll frame */
+  .sky { background-attachment: scroll; }
+
+  .glass,
+  .btn-ghost,
+  .terminal-body,
+  .navbar.open .nav-links {
+    backdrop-filter: blur(11px);
+    -webkit-backdrop-filter: blur(11px);
+  }
+
+  /* card widths — never touch the viewport edges, lighter padding */
+  .hero-card,
+  .about-panel,
+  .exp-card,
+  .project-card,
+  .terminal-window {
+    width: 92%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .hero-card { padding: 24px; }
+  .about-panel { padding: 24px; }
+  .exp-card { padding: 24px 20px; }
+  .project-card { padding: 24px 20px; }
+
+  /* hero CTAs: full-width stacked buttons */
+  .btn-row {
+    flex-direction: column;
+    width: 100%;
+    gap: 12px;
+  }
+  .btn-row .btn { width: 100%; justify-content: center; }
+  .social-row { flex-wrap: wrap; gap: 10px; }
+
+  /* about / bento — single column, wrapping tech pills */
+  .about-grid { grid-template-columns: 1fr; gap: 24px; }
+  .skill-pills { flex-wrap: wrap; gap: 8px; }
+
+  /* experience / project card tags — smaller, always wrapping, never overlapping */
+  .tag-row { gap: 6px; }
+  .tag {
+    font-size: 0.72rem;
+    padding: 5px 11px;
+  }
+  .exp-title-row h3,
+  .project-card h3 { font-size: 1rem; }
+  .logo-badge { width: 44px; height: 44px; border-radius: 12px; }
+  .logo-badge.logo-badge-lg { width: 50px; height: 50px; }
+  .logo-badge img { height: 28px; }
+  .logo-badge img.logo-img-lg { height: 36px; }
+
+  /* navbar — keep items from overlapping on narrow screens */
+  .navbar { padding: 12px 16px; }
+  .navbar.open .nav-links {
+    flex-wrap: wrap;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
 }
